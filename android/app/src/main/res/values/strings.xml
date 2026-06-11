@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">equoia</string>
+    <string name="title_activity_main">equoia</string>
+    <string name="package_name">com.equoia.app</string>
+    <string name="custom_url_scheme">com.equoia.app</string>
+</resources>
