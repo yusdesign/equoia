@@ -47,7 +47,6 @@
     .hidden { display: none; }
     .version { position: fixed; bottom: 6px; right: 8px; font-size: 0.6rem; opacity: 0.3; }
     .loading { text-align: center; padding: 20px; color: #8a9a5a; }
-    .email-mode-badge { background: #4a6e00; padding: 4px 8px; border-radius: 2px; font-size: 0.7rem; display: inline-block; margin-bottom: 10px; }
     @media (max-width: 480px) { .container { padding: 8px; } .tab { font-size: 0.75rem; padding: 10px 2px; } }
   </style>
 </head>
@@ -55,7 +54,7 @@
 
 <div class="splash" id="splashScreen">
   <h1>🌲 Equoia</h1>
-  <div class="splash-status" id="splashStatus">Подключение к базе...</div>
+  <div class="splash-status" id="splashStatus">Загрузка...</div>
 </div>
 
 <div class="main-content" id="mainContent">
@@ -88,14 +87,13 @@
       
       <div id="suppliersTabContent" class="hidden">
         <div class="card">
-          <div id="dbModeBadge" class="email-mode-badge">⚡ Режим: база данных</div>
           <h3>🏢 Поставщики Эквойи</h3>
           <div id="suppliersList" class="loading">Загрузка базы поставщиков...</div>
         </div>
         
         <div class="card">
           <h3>➕ Стать поставщиком</h3>
-          <p id="formNotice">Заявку проверит модератор</p>
+          <p>Заявку проверит модератор и добавит в базу.</p>
           <input type="text" id="supplierName" placeholder="Название / ИП">
           <input type="text" id="supplierCity" placeholder="Город">
           <input type="text" id="supplierTrees" placeholder="Какие деревья (кедр, дуб...)">
@@ -136,66 +134,48 @@
   </div>
 </div>
 
-<script type="module">
-  import { createClient } from '@supabase/supabase-js';
-
+<script>
+  // ========== SUPABASE REST API (без SDK) ==========
   const SUPABASE_URL = 'https://ssherakemeteykpngqdx.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_2RlCyaQEoq12AYDO26vLMA_ZQ7I9yTO';
-  const FALLBACK_EMAIL = 'equoia@internet.ru';
+  const SUPABASE_KEY = 'sb_publishable_2RlCyaQEoq12AYDO26vLMA_ZQ7I9yTO';
   
-  let supabase = null;
-  let dbMode = false;
+  const API_HEADERS = {
+    'apikey': SUPABASE_KEY,
+    'Content-Type': 'application/json'
+  };
   
-  function sendEmail(subject, body) {
-    window.location.href = `mailto:${FALLBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  }
+  let dbConnected = false;
   
-  async function initSupabase() {
+  async function testConnection() {
     try {
-      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: { persistSession: false }
-      });
-      
-      // Пробуем подключиться с таймаутом 5 секунд
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout')), 5000)
-      );
-      
-      const queryPromise = supabase.from('suppliers').select('count', { count: 'exact', head: true });
-      
-      await Promise.race([queryPromise, timeoutPromise]);
-      
-      dbMode = true;
-      document.getElementById('splashStatus').innerHTML = '🌲 База данных подключена';
-      document.getElementById('dbModeBadge').innerHTML = '⚡ Режим: база данных (онлайн)';
-      document.getElementById('formNotice').innerHTML = 'Заявка отправится в базу данных';
-      return true;
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/suppliers?select=id&limit=1&apikey=${SUPABASE_KEY}`);
+      if (res.ok) {
+        dbConnected = true;
+        document.getElementById('splashStatus').innerHTML = '🌲 База данных подключена';
+        return true;
+      } else {
+        throw new Error(`Status ${res.status}`);
+      }
     } catch (e) {
-      console.warn('Supabase connection failed, using email fallback:', e);
-      dbMode = false;
+      console.warn('DB connection failed:', e);
       document.getElementById('splashStatus').innerHTML = '📧 Работаем через email (база временно недоступна)';
-      document.getElementById('dbModeBadge').innerHTML = '📧 Режим: email (офлайн)';
-      document.getElementById('formNotice').innerHTML = 'Заявка отправится на email equoia@internet.ru';
+      dbConnected = false;
       return false;
     }
   }
   
   async function loadSuppliers() {
     const container = document.getElementById('suppliersList');
-    
-    if (!dbMode) {
+    if (!dbConnected) {
       container.innerHTML = '<div class="supplier-item">📧 Режим email. Напишите нам для получения списка поставщиков.</div>';
       return;
     }
     
     try {
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('*')
-        .eq('approved', true)
-        .order('created_at', { ascending: false });
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/suppliers?select=*&approved=eq.true&order=created_at.desc&apikey=${SUPABASE_KEY}`);
+      const data = await res.json();
       
-      if (error || !data || data.length === 0) {
+      if (!data || data.length === 0) {
         container.innerHTML = '<div class="supplier-item">🌲 Пока нет поставщиков. Станьте первым!</div>';
         return;
       }
@@ -214,20 +194,16 @@
   
   async function loadSeedlings() {
     const container = document.getElementById('seedlingsList');
-    
-    if (!dbMode) {
+    if (!dbConnected) {
       container.innerHTML = '<div class="seedling-item">📧 Режим email. Напишите нам для поиска саженцев.</div>';
       return;
     }
     
     try {
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('*')
-        .eq('approved', true)
-        .limit(5);
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/suppliers?select=*&approved=eq.true&limit=5&apikey=${SUPABASE_KEY}`);
+      const data = await res.json();
       
-      if (error || !data || data.length === 0) {
+      if (!data || data.length === 0) {
         container.innerHTML = '<div class="seedling-item">🌱 Предложений пока нет</div>';
         return;
       }
@@ -255,18 +231,23 @@
       return;
     }
     
-    if (!dbMode) {
-      const body = `Заявка поставщика (email режим):\nНазвание: ${name}\nГород: ${city}\nДеревья: ${trees}\nТелефон: ${phone}`;
-      sendEmail('Заявка поставщика', body);
+    if (!dbConnected) {
+      const body = `Заявка поставщика:\nНазвание: ${name}\nГород: ${city}\nДеревья: ${trees}\nТелефон: ${phone}`;
+      window.location.href = `mailto:equoia@internet.ru?subject=Заявка поставщика&body=${encodeURIComponent(body)}`;
       alert('✅ Заявка отправлена на email!');
     } else {
       try {
-        const { error } = await supabase
-          .from('suppliers')
-          .insert([{ name, city, trees, phone, approved: false }]);
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/suppliers`, {
+          method: 'POST',
+          headers: API_HEADERS,
+          body: JSON.stringify({ name, city, trees, phone, approved: false })
+        });
         
-        if (error) throw error;
-        alert('✅ Заявка отправлена на модерацию!');
+        if (res.ok) {
+          alert('✅ Заявка отправлена на модерацию!');
+        } else {
+          throw new Error(`Status ${res.status}`);
+        }
       } catch (e) {
         alert('❌ Ошибка: ' + e.message);
         return;
@@ -290,18 +271,23 @@
       return;
     }
     
-    if (!dbMode) {
-      const body = `Экспорт (email режим):\nСтрана: ${country}\nТип: ${tree_type}\nКол-во: ${quantity}\nСообщение: ${message}`;
-      sendEmail('Экспортный запрос', body);
+    if (!dbConnected) {
+      const body = `Экспортный запрос:\nСтрана: ${country}\nТип: ${tree_type}\nКол-во: ${quantity}\nСообщение: ${message}`;
+      window.location.href = `mailto:equoia@internet.ru?subject=Экспортный запрос&body=${encodeURIComponent(body)}`;
       alert('✅ Запрос отправлен на email!');
     } else {
       try {
-        const { error } = await supabase
-          .from('export_requests')
-          .insert([{ country, tree_type, quantity, message }]);
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/export_requests`, {
+          method: 'POST',
+          headers: API_HEADERS,
+          body: JSON.stringify({ country, tree_type, quantity, message })
+        });
         
-        if (error) throw error;
-        alert('✅ Запрос отправлен! Менеджер свяжется с вами.');
+        if (res.ok) {
+          alert('✅ Запрос отправлен! Менеджер свяжется с вами.');
+        } else {
+          throw new Error(`Status ${res.status}`);
+        }
       } catch (e) {
         alert('❌ Ошибка: ' + e.message);
         return;
@@ -332,9 +318,9 @@
     });
   }
   
-  // Инициализация
+  // ========== ИНИЦИАЛИЗАЦИЯ ==========
   setTimeout(async () => {
-    await initSupabase();
+    await testConnection();
     await loadSuppliers();
     await loadSeedlings();
     
@@ -349,7 +335,7 @@
     }
   }, 500);
   
-  // Обработчики
+  // ========== ОБРАБОТЧИКИ ==========
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
   });
