@@ -3,195 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Equoia 🌲</title>
+  <title>Эквойя 🌲</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: #0a0f0a;
-      color: #00e676;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-    }
-
-    /* РАДИУС 2px ВСЕГДА И ВЕЗДЕ */
-    .card, button, input, select, textarea, .mode-tab, .messenger-btn, .seedling-item {
-      border-radius: 2px !important;
-    }
-
-    /* ЗАГРУЗОЧНЫЙ ЭКРАН */
-    .splash {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #0a0f0a;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      transition: opacity 1s ease;
-    }
-
-    .splash h1 {
-      font-size: 4rem;
-      color: #00e676;
-      text-align: center;
-      animation: fadeInScale 1.2s ease;
-    }
-
-    @keyframes fadeInScale {
-      0% { opacity: 0; transform: scale(0.9); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    /* ОСНОВНОЙ КОНТЕНТ */
-    .main-content {
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    /* TAB BAR — ТРИ ЛИНИИ (HAMBURGER) ТЕПЕРЬ ТАБЫ */
-    .tab-bar {
-      display: flex;
-      margin-bottom: 24px;
-      background: #0f1a0f;
-      border: 1px solid #2a4a2a;
-    }
-
-    .tab {
-      flex: 1;
-      text-align: center;
-      padding: 12px;
-      cursor: pointer;
-      background: #0f1a0f;
-      color: #4a6a4a;
-      transition: all 0.2s;
-    }
-
-    .tab.active {
-      background: #00e67620;
-      color: #00e676;
-      border-bottom: 2px solid #00e676;
-    }
-
-    .card {
-      background: #1a2a1a;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #2a4a2a;
-    }
-
-    h3 {
-      margin-top: 0;
-      margin-bottom: 16px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0 16px;
-      background: #0f1a0f;
-      border: 1px solid #2a4a2a;
-      color: #e0e0e0;
-      font-size: 1rem;
-    }
-
-    button {
-      background: #00e676;
-      color: #0a0f0a;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    button:active { transform: scale(0.98); }
-
-    .messenger-btn {
-      display: inline-block;
-      text-align: center;
-      margin: 5px;
-      padding: 8px 16px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .btn-max { background: #0066ff; color: white; }
-    .btn-vk { background: #0077ff; color: white; }
-    .btn-email { background: #4a6a4a; color: white; }
-
-    .contact-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-      justify-content: center;
-    }
-
-    .seedling-item {
-      background: #0f1a0f;
-      padding: 16px;
-      margin-bottom: 12px;
-      border-left: 2px solid #00e676;
-    }
-
-    .seedling-title {
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-
-    .seedling-details {
-      color: #8bc34a;
-      font-size: 0.85rem;
-      margin: 8px 0;
-    }
-
-    .badge {
-      display: inline-block;
-      background: #00e67620;
-      padding: 4px 12px;
-      font-size: 0.75rem;
-      margin-right: 8px;
-      margin-top: 8px;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 32px;
-      padding: 16px;
-      font-size: 0.7rem;
-      color: #4a6a4a;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .version {
-      position: fixed;
-      bottom: 8px;
-      right: 12px;
-      font-size: 0.7rem;
-      opacity: 0.4;
-    }
-
-    hr {
-      border-color: #2a4a2a;
-      margin: 20px 0;
-    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#0a0f0a;color:#00e676;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;min-height:100vh;}
+    .card,button,input,select,textarea,.tab,.messenger-btn,.seedling-item{border-radius:2px!important;}
+    .splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0f0a;display:flex;justify-content:center;align-items:center;z-index:1000;transition:opacity 1s ease;}
+    .splash h1{font-size:4rem;color:#00e676;animation:fadeInScale 1.2s ease;}
+    @keyframes fadeInScale{0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
+    .main-content{opacity:0;transition:opacity 0.8s ease;}
+    .container{max-width:800px;margin:0 auto;padding:16px;}
+    .tab-bar{display:flex;margin-bottom:24px;background:#0f1a0f;border:1px solid #2a4a2a;}
+    .tab{flex:1;text-align:center;padding:12px;cursor:pointer;background:#0f1a0f;color:#4a6a4a;}
+    .tab.active{background:#00e67620;color:#00e676;border-bottom:2px solid #00e676;}
+    .card{background:#1a2a1a;padding:20px;margin-bottom:20px;border:1px solid #2a4a2a;}
+    h3{margin-bottom:16px;}
+    input,select,textarea{width:100%;padding:10px;margin:8px 0 16px;background:#0f1a0f;border:1px solid #2a4a2a;color:#e0e0e0;}
+    button{background:#00e676;color:#0a0f0a;border:none;padding:10px 20px;font-weight:bold;cursor:pointer;}
+    button:active{transform:scale(0.98);}
+    .messenger-btn{display:inline-block;margin:5px;padding:8px 16px;text-decoration:none;font-weight:bold;}
+    .btn-max{background:#0066ff;color:white;}
+    .btn-vk{background:#0077ff;color:white;}
+    .btn-email{background:#4a6a4a;color:white;}
+    .contact-bar{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px;justify-content:center;}
+    .seedling-item{background:#0f1a0f;padding:16px;margin-bottom:12px;border-left:2px solid #00e676;}
+    .seedling-title{font-weight:bold;font-size:1.2rem;}
+    .seedling-details{color:#8bc34a;font-size:0.85rem;margin:8px 0;}
+    .badge{display:inline-block;background:#00e67620;padding:4px 12px;font-size:0.75rem;margin-right:8px;margin-top:8px;}
+    .footer{text-align:center;margin-top:32px;padding:16px;font-size:0.7rem;color:#4a6a4a;}
+    .hidden{display:none;}
+    .version{position:fixed;bottom:8px;right:12px;font-size:0.7rem;opacity:0.4;}
+    hr{border-color:#2a4a2a;margin:20px 0;}
+    .search-info{font-size:0.7rem;margin-top:8px;color:#6a8a6a;}
   </style>
 </head>
 <body>
@@ -203,7 +46,7 @@
 <div class="main-content" id="mainContent">
   <div class="container">
     
-    <!-- TAB BAR вместо трёх линий -->
+    <!-- TAB BAR -->
     <div class="tab-bar">
       <div class="tab active" data-tab="buyer">🌱 Покупателю</div>
       <div class="tab" data-tab="supplier">🏢 Поставщику</div>
@@ -212,42 +55,32 @@
     
     <!-- ВКЛАДКА: ПОКУПАТЕЛЬ -->
     <div id="buyerTabContent">
+      <!-- ПОИСК ЧЕРЕЗ ECOSIA (РАБОТАЕТ) -->
       <div class="card">
-        <h3>🔍 Найти саженцы</h3>
-        <input type="text" id="searchCity" placeholder="Город или регион" value="Москва">
-        <select id="treeType">
-          <option value="">Любое дерево</option>
-          <option>Дуб</option><option>Берёза</option><option>Сосна</option>
-          <option>Липа</option><option>Клён</option><option>Рябина</option>
-          <option>Кедр сибирский</option><option>Лиственница</option>
-        </select>
-        <button id="searchBtn">🔍 Искать</button>
+        <h3>🔍 Поиск в Ecosia</h3>
+        <p>Каждый поиск сажает деревья 🌱</p>
+        <form id="searchForm">
+          <input type="text" id="searchQuery" placeholder="Что ищем? (кедр, берёза, питомник...)" autocomplete="off">
+          <button type="submit">🌍 Поиск через Ecosia</button>
+        </form>
+        <div class="search-info">
+          🌲 Ecosia использует Bing и сажает деревья на доходы от рекламы
+        </div>
       </div>
       
-      <div id="results">
-        <h3>📋 Предложения:</h3>
-        <div id="offersList">
-          <div class="seedling-item">
-            <div class="seedling-title">🌳 Саженцы дуба (2-летние)</div>
-            <div class="seedling-details">📍 Москва, Сокольники • 45 шт. • 250 ₽/шт.</div>
-            <div>Питомник "Русский лес" • ОПТ от 20 шт. — 200 ₽</div>
-            <span class="badge">🚚 Доставка</span>
-            <span class="badge">🌱 Фитопаспорт</span>
-            <div class="contact-bar">
-              <a href="https://max.ru/join/V9crGS5vyOWWdqDEodoMtLNkLCuymz0f80gMVMwx2sg" class="messenger-btn btn-max" target="_blank">💬 Max</a>
-              <a href="https://vk.com/equoia_club" class="messenger-btn btn-vk" target="_blank">📱 VK</a>
-            </div>
-          </div>
-          <div class="seedling-item">
-            <div class="seedling-title">🌲 Кедр сибирский (3-летние)</div>
-            <div class="seedling-details">📍 Томская область • 120 шт. • 600 ₽/шт.</div>
-            <div>Питомник "Сибирский кедр" • Сертификаты</div>
-            <span class="badge">✈️ Доставка по РФ и СНГ</span>
-            <div class="contact-bar">
-              <a href="https://max.ru/join/V9crGS5vyOWWdqDEodoMtLNkLCuymz0f80gMVMwx2sg" class="messenger-btn btn-max" target="_blank">💬 Max</a>
-              <a href="https://vk.com/equoia_club" class="messenger-btn btn-vk" target="_blank">📱 VK</a>
-            </div>
-          </div>
+      <!-- ПРЕДЛОЖЕНИЯ (СТАТИКА ДЛЯ ПРИМЕРА) -->
+      <div class="card">
+        <h3>📋 Предложения поставщиков</h3>
+        <div class="seedling-item">
+          <div class="seedling-title">🌳 Саженцы дуба (2-летние)</div>
+          <div class="seedling-details">📍 Москва, Сокольники • 45 шт. • 250 ₽/шт.</div>
+          <span class="badge">🚚 Доставка</span>
+          <span class="badge">🌱 Фитопаспорт</span>
+        </div>
+        <div class="seedling-item">
+          <div class="seedling-title">🌲 Кедр сибирский (3-летние)</div>
+          <div class="seedling-details">📍 Томская область • 120 шт. • 600 ₽/шт.</div>
+          <span class="badge">✈️ Доставка по РФ и СНГ</span>
         </div>
       </div>
     </div>
@@ -268,7 +101,7 @@
           <option>Более 2000/мес</option>
         </select>
         <textarea id="supplierCatalog" rows="2" placeholder="Породы (через запятую)"></textarea>
-        <button id="becomeSupplierBtn">🌲 Отправить</button>
+        <button id="becomeSupplierBtn">🌲 Отправить заявку</button>
       </div>
     </div>
     
@@ -288,27 +121,29 @@
         </select>
         <input type="number" id="exportQuantity" placeholder="Количество" value="100">
         <textarea id="exportMessage" rows="2" placeholder="Ваш вопрос"></textarea>
-        <button id="sendExportBtn">📨 Отправить</button>
+        <button id="sendExportBtn">📨 Отправить запрос</button>
       </div>
     </div>
     
-    <!-- ОБЩИЕ КОНТАКТЫ -->
+    <!-- ОБЩИЕ КОНТАКТЫ (MAX + VK + EMAIL) -->
     <div class="card">
-      <h3>💬 Связаться</h3>
+      <h3>💬 Связаться с Эквойей</h3>
       <div class="contact-bar">
-        <a href="https://max.ru/join/V9crGS5vyOWWdqDEodoMtLNkLCuymz0f80gMVMwx2sg" class="messenger-btn btn-max" target="_blank">💬 Max</a>
-        <a href="https://vk.com/equoia_club" class="messenger-btn btn-vk" target="_blank">📱 VK</a>
+        <a href="https://max.ru/join/V9crGS5vyOWWdqDEodoMtLNkLCuymz0f80gMVMwx2sg" class="messenger-btn btn-max" target="_blank">💬 Max (чат)</a>
+        <a href="https://vk.com/equoia_club" class="messenger-btn btn-vk" target="_blank">📱 VK Сообщество</a>
         <a href="mailto:equoia@internet.ru" class="messenger-btn btn-email" target="_blank">📧 Email</a>
       </div>
     </div>
     
-    <div class="footer">🌱 Посажено через Эквойю: <span id="impactCount">127</span> деревьев</div>
+    <div class="footer">
+      🌱 Посажено через Эквойю: <span id="impactCount">127</span> деревьев
+    </div>
     <div class="version" id="versionText">v...</div>
   </div>
 </div>
 
 <script>
-  // ЗАГРУЗОЧНЫЙ ЭКРАН
+  // ========== ЗАГРУЗОЧНЫЙ ЭКРАН ==========
   setTimeout(() => {
     const splash = document.getElementById('splashScreen');
     const main = document.getElementById('mainContent');
@@ -321,7 +156,7 @@
     }
   }, 1200);
 
-  // TAB BAR (один экран)
+  // ========== TAB BAR ==========
   function switchTab(tabId) {
     document.getElementById('buyerTabContent').classList.add('hidden');
     document.getElementById('supplierTabContent').classList.add('hidden');
@@ -343,13 +178,26 @@
     });
   });
 
-  // EMAIL ФУНКЦИЯ
+  // ========== ECOSIA ПОИСК (РАБОТАЕТ) ==========
+  const SEARCH_URL = 'https://www.ecosia.org/search?q=';
+  
+  document.getElementById('searchForm')?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const query = document.getElementById('searchQuery')?.value.trim();
+    if (query) {
+      window.open(SEARCH_URL + encodeURIComponent(query), '_blank');
+    } else {
+      alert('🌲 Введите запрос — дерево посадим вместе!');
+    }
+  });
+
+  // ========== EMAIL ==========
   const CONTACT_EMAIL = "equoia@internet.ru";
   function sendEmail(subject, body) {
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
-  // ЗАЯВКИ (без демо-алертов, просто отправка)
+  // ========== ЗАЯВКИ ==========
   document.getElementById("becomeSupplierBtn")?.addEventListener("click", () => {
     const name = document.getElementById("supplierName")?.value || "";
     const inn = document.getElementById("supplierInn")?.value || "";
@@ -358,7 +206,7 @@
     const volume = document.getElementById("supplierVolume")?.value || "";
     const catalog = document.getElementById("supplierCatalog")?.value || "";
     sendEmail("Заявка поставщика", `Название: ${name}\nИНН: ${inn}\nТелефон: ${phone}\nEmail: ${email}\nОбъём: ${volume}\nКаталог: ${catalog}`);
-    alert("✅ Отправлено");
+    alert("✅ Заявка отправлена!");
   });
 
   document.getElementById("sendExportBtn")?.addEventListener("click", () => {
@@ -367,25 +215,17 @@
     const qty = document.getElementById("exportQuantity")?.value || "";
     const msg = document.getElementById("exportMessage")?.value || "";
     sendEmail("Экспорт", `Страна: ${country}\nТип: ${tree}\nКол-во: ${qty}\nСообщение: ${msg}`);
-    alert("✅ Отправлено");
+    alert("✅ Запрос отправлен!");
   });
 
-  // ПОИСК (без демо, просто заглушка-фильтр)
-  document.getElementById("searchBtn")?.addEventListener("click", () => {
-    const city = document.getElementById("searchCity")?.value || "";
-    const tree = document.getElementById("treeType")?.value || "";
-    // Реальный поиск будет здесь, когда появятся данные
-    console.log(`Поиск: ${city}, ${tree}`);
-  });
-
-  // ВЕРСИЯ
+  // ========== ВЕРСИЯ ==========
   async function checkVersion() {
     try {
       const res = await fetch('version.json?_=' + Date.now());
       const data = await res.json();
       document.getElementById("versionText").innerText = `v${data.version}`;
     } catch(e) {
-      document.getElementById("versionText").innerText = "🌲 Equoia";
+      document.getElementById("versionText").innerText = "🌲 Equoia v1.0";
     }
   }
   checkVersion();
