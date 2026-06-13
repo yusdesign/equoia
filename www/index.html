@@ -24,9 +24,10 @@
     .content-scroll { height: calc(100vh - 60px); overflow-y: auto; padding-bottom: 80px; }
     .container { width: 100%; padding: 12px; }
     .card, button, input, select, textarea, .messenger-btn, .seedling-item, .supplier-item { border-radius: 2px !important; }
-    .splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--equoia-bg); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 1s ease; }
-    .splash h1 { font-size: 3rem; color: var(--equoia); animation: fadeInScale 1.2s ease; text-align: center; }
+    .splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--equoia-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; transition: opacity 1s ease; gap: 20px; }
+    .splash h1 { font-size: 3rem; color: var(--equoia); animation: fadeInScale 1.2s ease; }
     @keyframes fadeInScale { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+    .splash-status { color: var(--equoia-text); font-size: 0.8rem; opacity: 0.7; }
     .main-content { opacity: 0; transition: opacity 0.8s ease; }
     .card { background: var(--equoia-card); padding: 16px; margin-bottom: 16px; border: 1px solid var(--equoia-border); }
     h3 { margin-bottom: 12px; font-size: 1.2rem; color: var(--equoia-text-light); }
@@ -45,6 +46,7 @@
     .footer { text-align: center; margin-top: 24px; padding: 12px; font-size: 0.65rem; color: #5a6a4a; }
     .hidden { display: none; }
     .version { position: fixed; bottom: 6px; right: 8px; font-size: 0.6rem; opacity: 0.3; }
+    .loading { text-align: center; padding: 20px; color: #8a9a5a; }
     @media (max-width: 480px) { .container { padding: 8px; } .tab { font-size: 0.75rem; padding: 10px 2px; } }
   </style>
 </head>
@@ -52,6 +54,7 @@
 
 <div class="splash" id="splashScreen">
   <h1>🌲 Equoia</h1>
+  <div class="splash-status" id="splashStatus">Загрузка...</div>
 </div>
 
 <div class="main-content" id="mainContent">
@@ -66,7 +69,6 @@
   <div class="content-scroll">
     <div class="container">
       
-      <!-- ВКЛАДКА: ПОКУПАТЕЛЬ -->
       <div id="buyerTabContent">
         <div class="card">
           <h3>🔍 Поиск в Ecosia</h3>
@@ -74,26 +76,19 @@
             <input type="text" id="searchQuery" placeholder="Кедр, берёза, питомник..." autocomplete="off">
             <button type="submit">🌍 Поиск через Ecosia</button>
           </form>
-          <div class="search-info" style="font-size:0.7rem; margin-top:8px; color:#6a7a55;">
-            🌲 Ecosia сажает деревья на доходы от рекламы
-          </div>
+          <div style="font-size:0.7rem; margin-top:8px; color:#6a7a55;">🌲 Ecosia сажает деревья на доходы от рекламы</div>
         </div>
         
         <div class="card">
           <h3>📋 Предложения</h3>
-          <div id="seedlingsList">
-            <div class="seedling-item">🌳 Загрузка предложений...</div>
-          </div>
+          <div id="seedlingsList" class="loading">Загрузка предложений...</div>
         </div>
       </div>
       
-      <!-- ВКЛАДКА: ПОСТАВЩИКИ -->
       <div id="suppliersTabContent" class="hidden">
         <div class="card">
           <h3>🏢 Поставщики Эквойи</h3>
-          <div id="suppliersList">
-            <div class="supplier-item">📦 Загрузка базы поставщиков...</div>
-          </div>
+          <div id="suppliersList" class="loading">Загрузка базы поставщиков...</div>
         </div>
         
         <div class="card">
@@ -107,7 +102,6 @@
         </div>
       </div>
       
-      <!-- ВКЛАДКА: ЭКСПОРТ -->
       <div id="exportTabContent" class="hidden">
         <div class="card">
           <h3>🌍 Русские саженцы — миру</h3>
@@ -140,12 +134,32 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
+<script type="module">
+  import { createClient } from '@supabase/supabase-js';
+
   // ========== SUPABASE ==========
   const SUPABASE_URL = 'https://ssherakemeteykpngqdx.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_2RlCyaQEoq12AYDO26vLMA_ZQ7I9yTO';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  
+  let supabase;
+  let dbConnected = false;
+  
+  async function initSupabase() {
+    try {
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      // Пробуем сделать тестовый запрос
+      const { error } = await supabase.from('suppliers').select('count', { count: 'exact', head: true });
+      if (error) throw error;
+      dbConnected = true;
+      document.getElementById('splashStatus').innerHTML = '🌲 Подключено к базе';
+      return true;
+    } catch (e) {
+      console.warn('Supabase connection failed:', e);
+      document.getElementById('splashStatus').innerHTML = '⚠️ Работаем без базы';
+      dbConnected = false;
+      return false;
+    }
+  }
 
   // ========== ЗАГРУЗОЧНЫЙ ЭКРАН ==========
   setTimeout(() => {
@@ -156,9 +170,9 @@
       setTimeout(() => {
         splash.style.display = 'none';
         main.style.opacity = '1';
-      }, 1000);
+      }, 500);
     }
-  }, 1200);
+  }, 1500);
 
   // ========== ТАБЫ ==========
   function switchTab(tabId) {
@@ -184,8 +198,13 @@
     else alert('🌲 Введите запрос');
   });
 
-  // ========== ЗАГРУЗКА ПОСТАВЩИКОВ ИЗ SUPABASE ==========
+  // ========== ЗАГРУЗКА ПОСТАВЩИКОВ ==========
   async function loadSuppliers() {
+    if (!dbConnected) {
+      document.getElementById('suppliersList').innerHTML = '<div class="supplier-item">⚠️ База временно недоступна. Попробуйте позже.</div>';
+      return;
+    }
+    
     const { data, error } = await supabase
       .from('suppliers')
       .select('*')
@@ -193,26 +212,26 @@
       .order('created_at', { ascending: false });
     
     const container = document.getElementById('suppliersList');
-    if (error) {
-      container.innerHTML = '<div class="supplier-item">❌ Ошибка загрузки базы</div>';
-      return;
-    }
-    
-    if (!data || data.length === 0) {
+    if (error || !data || data.length === 0) {
       container.innerHTML = '<div class="supplier-item">🌲 Пока нет поставщиков. Станьте первым!</div>';
       return;
     }
     
     container.innerHTML = data.map(sup => `
       <div class="supplier-item">
-        <div class="supplier-name">🌲 ${sup.name}</div>
-        <div class="supplier-details">📍 ${sup.city} • ${sup.trees}</div>
-        <span class="badge">📞 ${sup.phone || 'телефон по запросу'}</span>
+        <div class="supplier-name">🌲 ${escapeHtml(sup.name)}</div>
+        <div class="supplier-details">📍 ${escapeHtml(sup.city)} • ${escapeHtml(sup.trees)}</div>
+        <span class="badge">📞 ${escapeHtml(sup.phone || 'телефон по запросу')}</span>
       </div>
     `).join('');
   }
   
   async function loadSeedlings() {
+    if (!dbConnected) {
+      document.getElementById('seedlingsList').innerHTML = '<div class="seedling-item">⚠️ База временно недоступна</div>';
+      return;
+    }
+    
     const { data, error } = await supabase
       .from('suppliers')
       .select('*')
@@ -227,18 +246,20 @@
     
     container.innerHTML = data.map(sup => `
       <div class="seedling-item">
-        <div class="seedling-title">🌳 ${sup.trees}</div>
-        <div class="seedling-details">📍 ${sup.city} • ${sup.name}</div>
+        <div class="seedling-title">🌳 ${escapeHtml(sup.trees)}</div>
+        <div class="seedling-details">📍 ${escapeHtml(sup.city)} • ${escapeHtml(sup.name)}</div>
         <span class="badge">🌱 Саженцы</span>
       </div>
     `).join('');
   }
-  
-  loadSuppliers();
-  loadSeedlings();
 
-  // ========== ДОБАВЛЕНИЕ ПОСТАВЩИКА (В БАЗУ) ==========
+  // ========== ДОБАВЛЕНИЕ ПОСТАВЩИКА ==========
   document.getElementById('addSupplierBtn')?.addEventListener('click', async () => {
+    if (!dbConnected) {
+      alert('❌ База данных недоступна. Попробуйте позже или напишите на equoia@internet.ru');
+      return;
+    }
+    
     const name = document.getElementById('supplierName')?.value.trim();
     const city = document.getElementById('supplierCity')?.value.trim();
     const trees = document.getElementById('supplierTrees')?.value.trim();
@@ -264,8 +285,13 @@
     }
   });
 
-  // ========== ЭКСПОРТ (В БАЗУ) ==========
+  // ========== ЭКСПОРТ ==========
   document.getElementById('sendExportBtn')?.addEventListener('click', async () => {
+    if (!dbConnected) {
+      alert('❌ База данных недоступна. Попробуйте позже или напишите на equoia@internet.ru');
+      return;
+    }
+    
     const country = document.getElementById('exportCountry')?.value || '';
     const tree_type = document.getElementById('exportTreeType')?.value || '';
     const quantity = parseInt(document.getElementById('exportQuantity')?.value) || 0;
@@ -288,6 +314,17 @@
     }
   });
 
+  // ========== ESCAPE HTML ==========
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
   // ========== ВЕРСИЯ ==========
   async function checkVersion() {
     try {
@@ -298,7 +335,16 @@
       document.getElementById('versionText').innerText = '🌲 v1.0';
     }
   }
-  checkVersion();
+
+  // ========== ЗАПУСК ==========
+  async function init() {
+    await initSupabase();
+    await loadSuppliers();
+    await loadSeedlings();
+    checkVersion();
+  }
+  
+  init();
 </script>
 </body>
 </html>
