@@ -27,7 +27,7 @@
     .splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--equoia-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; transition: opacity 1s ease; gap: 20px; }
     .splash h1 { font-size: 3rem; color: var(--equoia); animation: fadeInScale 1.2s ease; }
     @keyframes fadeInScale { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
-    .splash-status { color: var(--equoia-text); font-size: 0.8rem; opacity: 0.7; }
+    .splash-status { color: var(--equoia-text); font-size: 0.8rem; text-align: center; padding: 0 20px; }
     .main-content { opacity: 0; transition: opacity 0.8s ease; }
     .card { background: var(--equoia-card); padding: 16px; margin-bottom: 16px; border: 1px solid var(--equoia-border); }
     h3 { margin-bottom: 12px; font-size: 1.2rem; color: var(--equoia-text-light); }
@@ -47,6 +47,7 @@
     .hidden { display: none; }
     .version { position: fixed; bottom: 6px; right: 8px; font-size: 0.6rem; opacity: 0.3; }
     .loading { text-align: center; padding: 20px; color: #8a9a5a; }
+    .email-mode-badge { background: #4a6e00; padding: 4px 8px; border-radius: 2px; font-size: 0.7rem; display: inline-block; margin-bottom: 10px; }
     @media (max-width: 480px) { .container { padding: 8px; } .tab { font-size: 0.75rem; padding: 10px 2px; } }
   </style>
 </head>
@@ -54,7 +55,7 @@
 
 <div class="splash" id="splashScreen">
   <h1>🌲 Equoia</h1>
-  <div class="splash-status" id="splashStatus">Загрузка...</div>
+  <div class="splash-status" id="splashStatus">Подключение к базе...</div>
 </div>
 
 <div class="main-content" id="mainContent">
@@ -87,13 +88,14 @@
       
       <div id="suppliersTabContent" class="hidden">
         <div class="card">
+          <div id="dbModeBadge" class="email-mode-badge">⚡ Режим: база данных</div>
           <h3>🏢 Поставщики Эквойи</h3>
           <div id="suppliersList" class="loading">Загрузка базы поставщиков...</div>
         </div>
         
         <div class="card">
           <h3>➕ Стать поставщиком</h3>
-          <p>Заявку проверит модератор и добавит в базу.</p>
+          <p id="formNotice">Заявку проверит модератор</p>
           <input type="text" id="supplierName" placeholder="Название / ИП">
           <input type="text" id="supplierCity" placeholder="Город">
           <input type="text" id="supplierTrees" placeholder="Какие деревья (кедр, дуб...)">
@@ -137,129 +139,112 @@
 <script type="module">
   import { createClient } from '@supabase/supabase-js';
 
-  // ========== SUPABASE ==========
   const SUPABASE_URL = 'https://ssherakemeteykpngqdx.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_2RlCyaQEoq12AYDO26vLMA_ZQ7I9yTO';
+  const FALLBACK_EMAIL = 'equoia@internet.ru';
   
-  let supabase;
-  let dbConnected = false;
+  let supabase = null;
+  let dbMode = false;
+  
+  function sendEmail(subject, body) {
+    window.location.href = `mailto:${FALLBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
   
   async function initSupabase() {
     try {
-      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      // Пробуем сделать тестовый запрос
-      const { error } = await supabase.from('suppliers').select('count', { count: 'exact', head: true });
-      if (error) throw error;
-      dbConnected = true;
-      document.getElementById('splashStatus').innerHTML = '🌲 Подключено к базе';
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false }
+      });
+      
+      // Пробуем подключиться с таймаутом 5 секунд
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 5000)
+      );
+      
+      const queryPromise = supabase.from('suppliers').select('count', { count: 'exact', head: true });
+      
+      await Promise.race([queryPromise, timeoutPromise]);
+      
+      dbMode = true;
+      document.getElementById('splashStatus').innerHTML = '🌲 База данных подключена';
+      document.getElementById('dbModeBadge').innerHTML = '⚡ Режим: база данных (онлайн)';
+      document.getElementById('formNotice').innerHTML = 'Заявка отправится в базу данных';
       return true;
     } catch (e) {
-      console.warn('Supabase connection failed:', e);
-      document.getElementById('splashStatus').innerHTML = '⚠️ Работаем без базы';
-      dbConnected = false;
+      console.warn('Supabase connection failed, using email fallback:', e);
+      dbMode = false;
+      document.getElementById('splashStatus').innerHTML = '📧 Работаем через email (база временно недоступна)';
+      document.getElementById('dbModeBadge').innerHTML = '📧 Режим: email (офлайн)';
+      document.getElementById('formNotice').innerHTML = 'Заявка отправится на email equoia@internet.ru';
       return false;
     }
   }
-
-  // ========== ЗАГРУЗОЧНЫЙ ЭКРАН ==========
-  setTimeout(() => {
-    const splash = document.getElementById('splashScreen');
-    const main = document.getElementById('mainContent');
-    if (splash) {
-      splash.style.opacity = '0';
-      setTimeout(() => {
-        splash.style.display = 'none';
-        main.style.opacity = '1';
-      }, 500);
-    }
-  }, 1500);
-
-  // ========== ТАБЫ ==========
-  function switchTab(tabId) {
-    document.getElementById('buyerTabContent').classList.add('hidden');
-    document.getElementById('suppliersTabContent').classList.add('hidden');
-    document.getElementById('exportTabContent').classList.add('hidden');
-    document.getElementById(`${tabId}TabContent`).classList.remove('hidden');
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.classList.remove('active');
-      if (tab.getAttribute('data-tab') === tabId) tab.classList.add('active');
-    });
-  }
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
-  });
-
-  // ========== ECOSIA ПОИСК ==========
-  const SEARCH_URL = 'https://www.ecosia.org/search?q=';
-  document.getElementById('searchForm')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const q = document.getElementById('searchQuery')?.value.trim();
-    if (q) window.open(SEARCH_URL + encodeURIComponent(q), '_blank');
-    else alert('🌲 Введите запрос');
-  });
-
-  // ========== ЗАГРУЗКА ПОСТАВЩИКОВ ==========
+  
   async function loadSuppliers() {
-    if (!dbConnected) {
-      document.getElementById('suppliersList').innerHTML = '<div class="supplier-item">⚠️ База временно недоступна. Попробуйте позже.</div>';
-      return;
-    }
-    
-    const { data, error } = await supabase
-      .from('suppliers')
-      .select('*')
-      .eq('approved', true)
-      .order('created_at', { ascending: false });
-    
     const container = document.getElementById('suppliersList');
-    if (error || !data || data.length === 0) {
-      container.innerHTML = '<div class="supplier-item">🌲 Пока нет поставщиков. Станьте первым!</div>';
+    
+    if (!dbMode) {
+      container.innerHTML = '<div class="supplier-item">📧 Режим email. Напишите нам для получения списка поставщиков.</div>';
       return;
     }
     
-    container.innerHTML = data.map(sup => `
-      <div class="supplier-item">
-        <div class="supplier-name">🌲 ${escapeHtml(sup.name)}</div>
-        <div class="supplier-details">📍 ${escapeHtml(sup.city)} • ${escapeHtml(sup.trees)}</div>
-        <span class="badge">📞 ${escapeHtml(sup.phone || 'телефон по запросу')}</span>
-      </div>
-    `).join('');
+    try {
+      const { data, error } = await supabase
+        .from('suppliers')
+        .select('*')
+        .eq('approved', true)
+        .order('created_at', { ascending: false });
+      
+      if (error || !data || data.length === 0) {
+        container.innerHTML = '<div class="supplier-item">🌲 Пока нет поставщиков. Станьте первым!</div>';
+        return;
+      }
+      
+      container.innerHTML = data.map(sup => `
+        <div class="supplier-item">
+          <div class="supplier-name">🌲 ${escapeHtml(sup.name)}</div>
+          <div class="supplier-details">📍 ${escapeHtml(sup.city)} • ${escapeHtml(sup.trees)}</div>
+          <span class="badge">📞 ${escapeHtml(sup.phone || 'телефон по запросу')}</span>
+        </div>
+      `).join('');
+    } catch (e) {
+      container.innerHTML = '<div class="supplier-item">⚠️ Ошибка загрузки. Попробуйте позже.</div>';
+    }
   }
   
   async function loadSeedlings() {
-    if (!dbConnected) {
-      document.getElementById('seedlingsList').innerHTML = '<div class="seedling-item">⚠️ База временно недоступна</div>';
-      return;
-    }
-    
-    const { data, error } = await supabase
-      .from('suppliers')
-      .select('*')
-      .eq('approved', true)
-      .limit(5);
-    
     const container = document.getElementById('seedlingsList');
-    if (error || !data || data.length === 0) {
-      container.innerHTML = '<div class="seedling-item">🌱 Предложений пока нет</div>';
+    
+    if (!dbMode) {
+      container.innerHTML = '<div class="seedling-item">📧 Режим email. Напишите нам для поиска саженцев.</div>';
       return;
     }
     
-    container.innerHTML = data.map(sup => `
-      <div class="seedling-item">
-        <div class="seedling-title">🌳 ${escapeHtml(sup.trees)}</div>
-        <div class="seedling-details">📍 ${escapeHtml(sup.city)} • ${escapeHtml(sup.name)}</div>
-        <span class="badge">🌱 Саженцы</span>
-      </div>
-    `).join('');
+    try {
+      const { data, error } = await supabase
+        .from('suppliers')
+        .select('*')
+        .eq('approved', true)
+        .limit(5);
+      
+      if (error || !data || data.length === 0) {
+        container.innerHTML = '<div class="seedling-item">🌱 Предложений пока нет</div>';
+        return;
+      }
+      
+      container.innerHTML = data.map(sup => `
+        <div class="seedling-item">
+          <div class="seedling-title">🌳 ${escapeHtml(sup.trees)}</div>
+          <div class="seedling-details">📍 ${escapeHtml(sup.city)} • ${escapeHtml(sup.name)}</div>
+          <span class="badge">🌱 Саженцы</span>
+        </div>
+      `).join('');
+    } catch (e) {
+      container.innerHTML = '<div class="seedling-item">⚠️ Ошибка загрузки</div>';
+    }
   }
-
-  // ========== ДОБАВЛЕНИЕ ПОСТАВЩИКА ==========
-  document.getElementById('addSupplierBtn')?.addEventListener('click', async () => {
-    if (!dbConnected) {
-      alert('❌ База данных недоступна. Попробуйте позже или напишите на equoia@internet.ru');
-      return;
-    }
-    
+  
+  async function addSupplier() {
     const name = document.getElementById('supplierName')?.value.trim();
     const city = document.getElementById('supplierCity')?.value.trim();
     const trees = document.getElementById('supplierTrees')?.value.trim();
@@ -270,28 +255,31 @@
       return;
     }
     
-    const { error } = await supabase
-      .from('suppliers')
-      .insert([{ name, city, trees, phone, approved: false }]);
-    
-    if (error) {
-      alert('❌ Ошибка: ' + error.message);
+    if (!dbMode) {
+      const body = `Заявка поставщика (email режим):\nНазвание: ${name}\nГород: ${city}\nДеревья: ${trees}\nТелефон: ${phone}`;
+      sendEmail('Заявка поставщика', body);
+      alert('✅ Заявка отправлена на email!');
     } else {
-      alert('✅ Заявка отправлена на модерацию!');
-      document.getElementById('supplierName').value = '';
-      document.getElementById('supplierCity').value = '';
-      document.getElementById('supplierTrees').value = '';
-      document.getElementById('supplierPhone').value = '';
-    }
-  });
-
-  // ========== ЭКСПОРТ ==========
-  document.getElementById('sendExportBtn')?.addEventListener('click', async () => {
-    if (!dbConnected) {
-      alert('❌ База данных недоступна. Попробуйте позже или напишите на equoia@internet.ru');
-      return;
+      try {
+        const { error } = await supabase
+          .from('suppliers')
+          .insert([{ name, city, trees, phone, approved: false }]);
+        
+        if (error) throw error;
+        alert('✅ Заявка отправлена на модерацию!');
+      } catch (e) {
+        alert('❌ Ошибка: ' + e.message);
+        return;
+      }
     }
     
+    document.getElementById('supplierName').value = '';
+    document.getElementById('supplierCity').value = '';
+    document.getElementById('supplierTrees').value = '';
+    document.getElementById('supplierPhone').value = '';
+  }
+  
+  async function sendExportRequest() {
     const country = document.getElementById('exportCountry')?.value || '';
     const tree_type = document.getElementById('exportTreeType')?.value || '';
     const quantity = parseInt(document.getElementById('exportQuantity')?.value) || 0;
@@ -302,19 +290,27 @@
       return;
     }
     
-    const { error } = await supabase
-      .from('export_requests')
-      .insert([{ country, tree_type, quantity, message }]);
-    
-    if (error) {
-      alert('❌ Ошибка: ' + error.message);
+    if (!dbMode) {
+      const body = `Экспорт (email режим):\nСтрана: ${country}\nТип: ${tree_type}\nКол-во: ${quantity}\nСообщение: ${message}`;
+      sendEmail('Экспортный запрос', body);
+      alert('✅ Запрос отправлен на email!');
     } else {
-      alert('✅ Запрос отправлен! Менеджер свяжется с вами.');
-      document.getElementById('exportMessage').value = '';
+      try {
+        const { error } = await supabase
+          .from('export_requests')
+          .insert([{ country, tree_type, quantity, message }]);
+        
+        if (error) throw error;
+        alert('✅ Запрос отправлен! Менеджер свяжется с вами.');
+      } catch (e) {
+        alert('❌ Ошибка: ' + e.message);
+        return;
+      }
     }
-  });
-
-  // ========== ESCAPE HTML ==========
+    
+    document.getElementById('exportMessage').value = '';
+  }
+  
   function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -324,8 +320,50 @@
       return m;
     });
   }
-
-  // ========== ВЕРСИЯ ==========
+  
+  function switchTab(tabId) {
+    document.getElementById('buyerTabContent').classList.add('hidden');
+    document.getElementById('suppliersTabContent').classList.add('hidden');
+    document.getElementById('exportTabContent').classList.add('hidden');
+    document.getElementById(`${tabId}TabContent`).classList.remove('hidden');
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.classList.remove('active');
+      if (tab.getAttribute('data-tab') === tabId) tab.classList.add('active');
+    });
+  }
+  
+  // Инициализация
+  setTimeout(async () => {
+    await initSupabase();
+    await loadSuppliers();
+    await loadSeedlings();
+    
+    const splash = document.getElementById('splashScreen');
+    const main = document.getElementById('mainContent');
+    if (splash) {
+      splash.style.opacity = '0';
+      setTimeout(() => {
+        splash.style.display = 'none';
+        main.style.opacity = '1';
+      }, 500);
+    }
+  }, 500);
+  
+  // Обработчики
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
+  });
+  
+  document.getElementById('searchForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = document.getElementById('searchQuery')?.value.trim();
+    if (q) window.open('https://www.ecosia.org/search?q=' + encodeURIComponent(q), '_blank');
+    else alert('🌲 Введите запрос');
+  });
+  
+  document.getElementById('addSupplierBtn')?.addEventListener('click', addSupplier);
+  document.getElementById('sendExportBtn')?.addEventListener('click', sendExportRequest);
+  
   async function checkVersion() {
     try {
       const res = await fetch('version.json?_=' + Date.now());
@@ -335,16 +373,7 @@
       document.getElementById('versionText').innerText = '🌲 v1.0';
     }
   }
-
-  // ========== ЗАПУСК ==========
-  async function init() {
-    await initSupabase();
-    await loadSuppliers();
-    await loadSeedlings();
-    checkVersion();
-  }
-  
-  init();
+  checkVersion();
 </script>
 </body>
 </html>
