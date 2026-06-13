@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Эквойя 🌲 Equoia</title>
+  <title>Equoia 🌲</title>
   <style>
     * {
       margin: 0;
@@ -18,7 +18,12 @@
       min-height: 100vh;
     }
 
-    /* ========== ЗАГРУЗОЧНЫЙ ЭКРАН ========== */
+    /* РАДИУС 2px ВСЕГДА И ВЕЗДЕ */
+    .card, button, input, select, textarea, .mode-tab, .messenger-btn, .seedling-item {
+      border-radius: 2px !important;
+    }
+
+    /* ЗАГРУЗОЧНЫЙ ЭКРАН */
     .splash {
       position: fixed;
       top: 0;
@@ -41,17 +46,11 @@
     }
 
     @keyframes fadeInScale {
-      0% {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
-    /* ========== ОСНОВНОЙ КОНТЕНТ (СКРЫТ ДО ЗАГРУЗКИ) ========== */
+    /* ОСНОВНОЙ КОНТЕНТ */
     .main-content {
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -63,38 +62,35 @@
       padding: 16px;
     }
 
-    .lang-bar {
-      text-align: right;
-      margin-bottom: 20px;
+    /* TAB BAR — ТРИ ЛИНИИ (HAMBURGER) ТЕПЕРЬ ТАБЫ */
+    .tab-bar {
+      display: flex;
+      margin-bottom: 24px;
+      background: #0f1a0f;
+      border: 1px solid #2a4a2a;
     }
 
-    .lang-btn {
-      background: transparent;
-      border: 1px solid #00e676;
-      color: #00e676;
-      padding: 5px 12px;
-      margin: 0 4px;
-      border-radius: 20px;
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
       cursor: pointer;
-      font-size: 0.8rem;
+      background: #0f1a0f;
+      color: #4a6a4a;
+      transition: all 0.2s;
     }
 
-    .lang-btn.active {
-      background: #00e676;
-      color: #0a0f0a;
+    .tab.active {
+      background: #00e67620;
+      color: #00e676;
+      border-bottom: 2px solid #00e676;
     }
 
     .card {
       background: #1a2a1a;
-      border-radius: 16px;
       padding: 20px;
       margin-bottom: 20px;
       border: 1px solid #2a4a2a;
-    }
-
-    h1 {
-      margin: 0 0 8px 0;
-      font-size: 2.5rem;
     }
 
     h3 {
@@ -102,42 +98,12 @@
       margin-bottom: 16px;
     }
 
-    .sub {
-      color: #8bc34a;
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-
-    .mode-tabs {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .mode-tab {
-      flex: 1;
-      text-align: center;
-      padding: 12px;
-      background: #0f1a0f;
-      border: 1px solid #2a4a2a;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .mode-tab.active {
-      background: #00e67620;
-      border-color: #00e676;
-      color: #00e676;
-    }
-
     input, select, textarea {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       margin: 8px 0 16px;
       background: #0f1a0f;
       border: 1px solid #2a4a2a;
-      border-radius: 8px;
       color: #e0e0e0;
       font-size: 1rem;
     }
@@ -146,42 +112,26 @@
       background: #00e676;
       color: #0a0f0a;
       border: none;
-      padding: 12px 24px;
-      border-radius: 40px;
+      padding: 10px 20px;
       font-weight: bold;
       cursor: pointer;
       font-size: 1rem;
-      transition: transform 0.1s;
     }
 
-    button:active {
-      transform: scale(0.98);
-    }
+    button:active { transform: scale(0.98); }
 
     .messenger-btn {
       display: inline-block;
       text-align: center;
       margin: 5px;
-      padding: 10px 20px;
-      border-radius: 40px;
+      padding: 8px 16px;
       text-decoration: none;
       font-weight: bold;
     }
 
-    .btn-max {
-      background: #0066ff;
-      color: white;
-    }
-
-    .btn-vk {
-      background: #0077ff;
-      color: white;
-    }
-
-    .btn-email {
-      background: #4a6a4a;
-      color: white;
-    }
+    .btn-max { background: #0066ff; color: white; }
+    .btn-vk { background: #0077ff; color: white; }
+    .btn-email { background: #4a6a4a; color: white; }
 
     .contact-bar {
       display: flex;
@@ -193,10 +143,9 @@
 
     .seedling-item {
       background: #0f1a0f;
-      border-radius: 12px;
       padding: 16px;
       margin-bottom: 12px;
-      border-left: 4px solid #00e676;
+      border-left: 2px solid #00e676;
     }
 
     .seedling-title {
@@ -214,7 +163,6 @@
       display: inline-block;
       background: #00e67620;
       padding: 4px 12px;
-      border-radius: 20px;
       font-size: 0.75rem;
       margin-right: 8px;
       margin-top: 8px;
@@ -248,30 +196,22 @@
 </head>
 <body>
 
-<!-- ЗАГРУЗОЧНЫЙ ЭКРАН "Эквойя 🌲" -->
 <div class="splash" id="splashScreen">
-  <h1>🌲 Эквойя</h1>
+  <h1>🌲 Equoia</h1>
 </div>
 
-<!-- ОСНОВНОЙ КОНТЕНТ -->
 <div class="main-content" id="mainContent">
   <div class="container">
     
-    <div class="lang-bar">
-      <button class="lang-btn active" data-lang="ru">🇷🇺 RU</button>
-      <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+    <!-- TAB BAR вместо трёх линий -->
+    <div class="tab-bar">
+      <div class="tab active" data-tab="buyer">🌱 Покупателю</div>
+      <div class="tab" data-tab="supplier">🏢 Поставщику</div>
+      <div class="tab" data-tab="export">🌍 Экспорт</div>
     </div>
     
-    <div class="sub" id="subtitle">Приложение. Дерево. Бизнес.</div>
-    
-    <div class="mode-tabs">
-      <div class="mode-tab active" data-mode="buyer" id="buyerTab">🌱 Покупателю</div>
-      <div class="mode-tab" data-mode="supplier" id="supplierTab">🏢 Поставщику</div>
-      <div class="mode-tab" data-mode="export" id="exportTab">🌍 Экспорт</div>
-    </div>
-    
-    <!-- ПОКУПАТЕЛЬ -->
-    <div id="buyerMode">
+    <!-- ВКЛАДКА: ПОКУПАТЕЛЬ -->
+    <div id="buyerTabContent">
       <div class="card">
         <h3>🔍 Найти саженцы</h3>
         <input type="text" id="searchCity" placeholder="Город или регион" value="Москва">
@@ -312,71 +252,63 @@
       </div>
     </div>
     
-    <!-- ПОСТАВЩИК -->
-    <div id="supplierMode" class="hidden">
+    <!-- ВКЛАДКА: ПОСТАВЩИК -->
+    <div id="supplierTabContent" class="hidden">
       <div class="card">
-        <h3>🏢 Стать поставщиком Эквойи</h3>
-        <p>Продавайте саженцы через нашу платформу. Комиссия — 10% с заказа.</p>
-        
-        <input type="text" id="supplierName" placeholder="Название компании / ИП">
-        <input type="text" id="supplierInn" placeholder="ИНН (для договора)">
+        <h3>🏢 Стать поставщиком</h3>
+        <p>Комиссия — 10% с заказа. Выход на экспорт.</p>
+        <input type="text" id="supplierName" placeholder="Название / ИП">
+        <input type="text" id="supplierInn" placeholder="ИНН">
         <input type="text" id="supplierPhone" placeholder="Телефон">
-        <input type="email" id="supplierEmail" placeholder="Email для уведомлений">
+        <input type="email" id="supplierEmail" placeholder="Email">
         <select id="supplierVolume">
-          <option>До 100 саженцев в месяц</option>
-          <option>100-500 саженцев в месяц</option>
-          <option>500-2000 саженцев в месяц</option>
-          <option>Более 2000 саженцев в месяц</option>
+          <option>До 100 саженцев/мес</option>
+          <option>100-500/мес</option>
+          <option>500-2000/мес</option>
+          <option>Более 2000/мес</option>
         </select>
-        <textarea id="supplierCatalog" rows="2" placeholder="Какие породы предлагаете? (через запятую)"></textarea>
-        <button id="becomeSupplierBtn">🌲 Отправить заявку</button>
+        <textarea id="supplierCatalog" rows="2" placeholder="Породы (через запятую)"></textarea>
+        <button id="becomeSupplierBtn">🌲 Отправить</button>
       </div>
     </div>
     
-    <!-- ЭКСПОРТ -->
-    <div id="exportMode" class="hidden">
+    <!-- ВКЛАДКА: ЭКСПОРТ -->
+    <div id="exportTabContent" class="hidden">
       <div class="card">
         <h3>🌍 Русские саженцы — миру</h3>
-        <p>Сибирский кедр, карельская берёза, лиственница. Полное сопровождение.</p>
-        
         <select id="exportCountry">
-          <option>Выберите страну</option>
+          <option>Страна</option>
           <option>🇨🇳 Китай</option><option>🇦🇪 ОАЭ</option>
           <option>🇰🇿 Казахстан</option><option>🇪🇺 Европа</option>
-          <option>🌍 Другая</option>
         </select>
-        
         <select id="exportTreeType">
           <option>Тип саженца</option>
           <option>Кедр сибирский</option><option>Карельская берёза</option>
-          <option>Лиственница сибирская</option><option>Микс "Русский лес"</option>
+          <option>Лиственница</option><option>Микс "Русский лес"</option>
         </select>
-        
         <input type="number" id="exportQuantity" placeholder="Количество" value="100">
-        <textarea id="exportMessage" rows="2" placeholder="Ваш вопрос..."></textarea>
-        <button id="sendExportBtn">📨 Отправить запрос</button>
+        <textarea id="exportMessage" rows="2" placeholder="Ваш вопрос"></textarea>
+        <button id="sendExportBtn">📨 Отправить</button>
       </div>
     </div>
     
-    <!-- ОБЩИЕ КОНТАКТЫ (только Max + VK + Email) -->
+    <!-- ОБЩИЕ КОНТАКТЫ -->
     <div class="card">
-      <h3>💬 Связаться с Эквойей</h3>
+      <h3>💬 Связаться</h3>
       <div class="contact-bar">
-        <a href="https://max.ru/join/V9crGS5vyOWWdqDEodoMtLNkLCuymz0f80gMVMwx2sg" class="messenger-btn btn-max" target="_blank">💬 Max (чат)</a>
-        <a href="https://vk.com/equoia_club" class="messenger-btn btn-vk" target="_blank">📱 VK Сообщество</a>
+        <a href="https://max.ru/join/V9crGS5vyOWWdqDEodoMtLNkLCuymz0f80gMVMwx2sg" class="messenger-btn btn-max" target="_blank">💬 Max</a>
+        <a href="https://vk.com/equoia_club" class="messenger-btn btn-vk" target="_blank">📱 VK</a>
         <a href="mailto:equoia@internet.ru" class="messenger-btn btn-email" target="_blank">📧 Email</a>
       </div>
     </div>
     
-    <div class="footer">
-      🌱 Посажено через Эквойю: <span id="impactCount">127</span> деревьев
-    </div>
+    <div class="footer">🌱 Посажено через Эквойю: <span id="impactCount">127</span> деревьев</div>
     <div class="version" id="versionText">v...</div>
   </div>
 </div>
 
 <script>
-  // ========== ЗАГРУЗОЧНЫЙ ЭКРАН ==========
+  // ЗАГРУЗОЧНЫЙ ЭКРАН
   setTimeout(() => {
     const splash = document.getElementById('splashScreen');
     const main = document.getElementById('mainContent');
@@ -387,59 +319,37 @@
         main.style.opacity = '1';
       }, 1000);
     }
-  }, 1200); // 1.2 секунды видим "Эквойя 🌲"
+  }, 1200);
 
-  // ========== КОНТАКТЫ ==========
-  const CONTACT_EMAIL = "equoia@internet.ru";
-
-  function sendEmail(subject, body) {
-    const mailtoLink = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
-  }
-
-  // ========== ПЕРЕВОДЫ ==========
-  const translations = {
-    ru: {
-      subtitle: "Приложение. Дерево. Бизнес.",
-      buyerTab: "🌱 Покупателю",
-      supplierTab: "🏢 Поставщику",
-      exportTab: "🌍 Экспорт"
-    },
-    en: {
-      subtitle: "An app. A tree. Business.",
-      buyerTab: "🌱 Buyer",
-      supplierTab: "🏢 Supplier",
-      exportTab: "🌍 Export"
-    }
-  };
-
-  let currentLang = "ru";
-  let currentMode = "buyer";
-
-  function updateLanguage() {
-    const t = translations[currentLang];
-    document.getElementById("subtitle").innerText = t.subtitle;
-    document.getElementById("buyerTab").innerText = t.buyerTab;
-    document.getElementById("supplierTab").innerText = t.supplierTab;
-    document.getElementById("exportTab").innerText = t.exportTab;
-    document.querySelectorAll(".lang-btn").forEach(btn => {
-      btn.classList.toggle("active", btn.getAttribute("data-lang") === currentLang);
+  // TAB BAR (один экран)
+  function switchTab(tabId) {
+    document.getElementById('buyerTabContent').classList.add('hidden');
+    document.getElementById('supplierTabContent').classList.add('hidden');
+    document.getElementById('exportTabContent').classList.add('hidden');
+    document.getElementById(`${tabId}TabContent`).classList.remove('hidden');
+    
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.classList.remove('active');
+      if (tab.getAttribute('data-tab') === tabId) {
+        tab.classList.add('active');
+      }
     });
   }
+  
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabId = tab.getAttribute('data-tab');
+      switchTab(tabId);
+    });
+  });
 
-  function switchMode(mode) {
-    currentMode = mode;
-    document.getElementById("buyerMode").classList.add("hidden");
-    document.getElementById("supplierMode").classList.add("hidden");
-    document.getElementById("exportMode").classList.add("hidden");
-    document.getElementById(`${mode}Mode`).classList.remove("hidden");
-
-    document.getElementById("buyerTab").classList.toggle("active", mode === "buyer");
-    document.getElementById("supplierTab").classList.toggle("active", mode === "supplier");
-    document.getElementById("exportTab").classList.toggle("active", mode === "export");
+  // EMAIL ФУНКЦИЯ
+  const CONTACT_EMAIL = "equoia@internet.ru";
+  function sendEmail(subject, body) {
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
-  // ========== ОБРАБОТЧИКИ ==========
+  // ЗАЯВКИ (без демо-алертов, просто отправка)
   document.getElementById("becomeSupplierBtn")?.addEventListener("click", () => {
     const name = document.getElementById("supplierName")?.value || "";
     const inn = document.getElementById("supplierInn")?.value || "";
@@ -447,57 +357,38 @@
     const email = document.getElementById("supplierEmail")?.value || "";
     const volume = document.getElementById("supplierVolume")?.value || "";
     const catalog = document.getElementById("supplierCatalog")?.value || "";
-    
-    const subject = `Заявка поставщика: ${name}`;
-    const body = `Название: ${name}\nИНН: ${inn}\nТелефон: ${phone}\nEmail: ${email}\nОбъём: ${volume}\nКаталог: ${catalog}\n---\nОтправлено через Эквойя`;
-    
-    sendEmail(subject, body);
-    alert("✅ Заявка отправлена! Мы свяжемся с вами.");
+    sendEmail("Заявка поставщика", `Название: ${name}\nИНН: ${inn}\nТелефон: ${phone}\nEmail: ${email}\nОбъём: ${volume}\nКаталог: ${catalog}`);
+    alert("✅ Отправлено");
   });
 
   document.getElementById("sendExportBtn")?.addEventListener("click", () => {
     const country = document.getElementById("exportCountry")?.value || "";
-    const treeType = document.getElementById("exportTreeType")?.value || "";
-    const quantity = document.getElementById("exportQuantity")?.value || "";
-    const message = document.getElementById("exportMessage")?.value || "";
-    
-    const subject = `Экспорт: ${treeType} в ${country}`;
-    const body = `Страна: ${country}\nТип: ${treeType}\nКоличество: ${quantity}\nСообщение: ${message}\n---\nЗапрос через Эквойя`;
-    
-    sendEmail(subject, body);
-    alert("✅ Запрос отправлен! Менеджер свяжется с вами.");
+    const tree = document.getElementById("exportTreeType")?.value || "";
+    const qty = document.getElementById("exportQuantity")?.value || "";
+    const msg = document.getElementById("exportMessage")?.value || "";
+    sendEmail("Экспорт", `Страна: ${country}\nТип: ${tree}\nКол-во: ${qty}\nСообщение: ${msg}`);
+    alert("✅ Отправлено");
   });
 
+  // ПОИСК (без демо, просто заглушка-фильтр)
   document.getElementById("searchBtn")?.addEventListener("click", () => {
     const city = document.getElementById("searchCity")?.value || "";
     const tree = document.getElementById("treeType")?.value || "";
-    alert(`🌲 Поиск: ${city}, ${tree || "все деревья"}\n\nДемо-режим. Скоро реальные предложения.`);
+    // Реальный поиск будет здесь, когда появятся данные
+    console.log(`Поиск: ${city}, ${tree}`);
   });
 
-  document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      currentLang = btn.getAttribute("data-lang");
-      updateLanguage();
-    });
-  });
-
-  document.getElementById("buyerTab")?.addEventListener("click", () => switchMode("buyer"));
-  document.getElementById("supplierTab")?.addEventListener("click", () => switchMode("supplier"));
-  document.getElementById("exportTab")?.addEventListener("click", () => switchMode("export"));
-
+  // ВЕРСИЯ
   async function checkVersion() {
     try {
       const res = await fetch('version.json?_=' + Date.now());
       const data = await res.json();
       document.getElementById("versionText").innerText = `v${data.version}`;
     } catch(e) {
-      document.getElementById("versionText").innerText = "🌲 Эквойя";
+      document.getElementById("versionText").innerText = "🌲 Equoia";
     }
   }
-
   checkVersion();
-  updateLanguage();
-  switchMode("buyer");
 </script>
 </body>
 </html>
