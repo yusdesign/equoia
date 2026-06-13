@@ -2,39 +2,233 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=yes">
   <title>Эквойя 🌲</title>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{background:#0a0f0a;color:#00e676;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;min-height:100vh;}
-    .card,button,input,select,textarea,.tab,.messenger-btn,.seedling-item{border-radius:2px!important;}
-    .splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0f0a;display:flex;justify-content:center;align-items:center;z-index:1000;transition:opacity 1s ease;}
-    .splash h1{font-size:4rem;color:#00e676;animation:fadeInScale 1.2s ease;}
-    @keyframes fadeInScale{0%{opacity:0;transform:scale(0.9);}100%{opacity:1;transform:scale(1);}}
-    .main-content{opacity:0;transition:opacity 0.8s ease;}
-    .container{max-width:800px;margin:0 auto;padding:16px;}
-    .tab-bar{display:flex;margin-bottom:24px;background:#0f1a0f;border:1px solid #2a4a2a;}
-    .tab{flex:1;text-align:center;padding:12px;cursor:pointer;background:#0f1a0f;color:#4a6a4a;}
-    .tab.active{background:#00e67620;color:#00e676;border-bottom:2px solid #00e676;}
-    .card{background:#1a2a1a;padding:20px;margin-bottom:20px;border:1px solid #2a4a2a;}
-    h3{margin-bottom:16px;}
-    input,select,textarea{width:100%;padding:10px;margin:8px 0 16px;background:#0f1a0f;border:1px solid #2a4a2a;color:#e0e0e0;}
-    button{background:#00e676;color:#0a0f0a;border:none;padding:10px 20px;font-weight:bold;cursor:pointer;}
-    button:active{transform:scale(0.98);}
-    .messenger-btn{display:inline-block;margin:5px;padding:8px 16px;text-decoration:none;font-weight:bold;}
-    .btn-max{background:#0066ff;color:white;}
-    .btn-vk{background:#0077ff;color:white;}
-    .btn-email{background:#4a6a4a;color:white;}
-    .contact-bar{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px;justify-content:center;}
-    .seedling-item{background:#0f1a0f;padding:16px;margin-bottom:12px;border-left:2px solid #00e676;}
-    .seedling-title{font-weight:bold;font-size:1.2rem;}
-    .seedling-details{color:#8bc34a;font-size:0.85rem;margin:8px 0;}
-    .badge{display:inline-block;background:#00e67620;padding:4px 12px;font-size:0.75rem;margin-right:8px;margin-top:8px;}
-    .footer{text-align:center;margin-top:32px;padding:16px;font-size:0.7rem;color:#4a6a4a;}
-    .hidden{display:none;}
-    .version{position:fixed;bottom:8px;right:12px;font-size:0.7rem;opacity:0.4;}
-    hr{border-color:#2a4a2a;margin:20px 0;}
-    .search-info{font-size:0.7rem;margin-top:8px;color:#6a8a6a;}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ЦВЕТА ЭКВОЙИ — ПОД ИКОНКУ #669900 */
+    :root {
+      --equoia: #669900;
+      --equoia-light: #7ab010;
+      --equoia-dark: #4a6e00;
+      --equoia-bg: #0f120a;
+      --equoia-card: #1a1f12;
+      --equoia-border: #2a3320;
+      --equoia-text: #b3c97a;
+      --equoia-text-light: #d4e6a5;
+    }
+
+    body {
+      background: var(--equoia-bg);
+      color: var(--equoia-text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    /* АДАПТИВ — 100% ширина */
+    .container {
+      width: 100%;
+      max-width: 100%;
+      padding: 12px;
+      margin: 0 auto;
+    }
+
+    /* ВЕЗДЕ РАДИУС 2px */
+    .card, button, input, select, textarea, .tab, .messenger-btn, .seedling-item {
+      border-radius: 2px !important;
+    }
+
+    /* ЗАГРУЗОЧНЫЙ ЭКРАН */
+    .splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--equoia-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 1s ease;
+    }
+
+    .splash h1 {
+      font-size: 3rem;
+      color: var(--equoia);
+      animation: fadeInScale 1.2s ease;
+      text-align: center;
+      padding: 20px;
+    }
+
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .main-content {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    /* ТАБЫ */
+    .tab-bar {
+      display: flex;
+      margin-bottom: 20px;
+      background: var(--equoia-card);
+      border: 1px solid var(--equoia-border);
+      width: 100%;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px 4px;
+      cursor: pointer;
+      background: var(--equoia-card);
+      color: #5a6a4a;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      background: var(--equoia);
+      color: #0f120a;
+      border-bottom: none;
+      font-weight: bold;
+    }
+
+    /* КАРТОЧКИ */
+    .card {
+      background: var(--equoia-card);
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid var(--equoia-border);
+      width: 100%;
+    }
+
+    h3 {
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+      color: var(--equoia-text-light);
+    }
+
+    /* ФОРМЫ */
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 14px;
+      background: #1a1f14;
+      border: 1px solid var(--equoia-border);
+      color: #e0e0d0;
+      font-size: 1rem;
+    }
+
+    button {
+      background: var(--equoia);
+      color: #0f120a;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    /* КНОПКИ МЕССЕНДЖЕРОВ */
+    .messenger-btn {
+      display: inline-block;
+      margin: 4px;
+      padding: 8px 14px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.85rem;
+      border-radius: 2px;
+    }
+
+    .btn-max { background: #0066cc; color: white; }
+    .btn-vk { background: #0077ff; color: white; }
+    .btn-email { background: #669900; color: #0f120a; }
+
+    .contact-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      justify-content: center;
+    }
+
+    /* ПРЕДЛОЖЕНИЯ */
+    .seedling-item {
+      background: #161c0e;
+      padding: 14px;
+      margin-bottom: 10px;
+      border-left: 2px solid var(--equoia);
+    }
+
+    .seedling-title {
+      font-weight: bold;
+      font-size: 1rem;
+      color: var(--equoia-text-light);
+    }
+
+    .seedling-details {
+      color: #8a9a5a;
+      font-size: 0.8rem;
+      margin: 6px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #2a3320;
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      margin-right: 6px;
+      margin-top: 6px;
+      color: #b3c97a;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      padding: 12px;
+      font-size: 0.65rem;
+      color: #5a6a4a;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .version {
+      position: fixed;
+      bottom: 6px;
+      right: 8px;
+      font-size: 0.6rem;
+      opacity: 0.3;
+      color: var(--equoia-text);
+    }
+
+    .search-info {
+      font-size: 0.65rem;
+      margin-top: 8px;
+      color: #6a7a55;
+    }
+
+    /* УЗКИЕ ЭКРАНЫ */
+    @media (max-width: 480px) {
+      .container { padding: 8px; }
+      .tab { font-size: 0.75rem; padding: 10px 2px; }
+      .messenger-btn { padding: 6px 12px; font-size: 0.75rem; }
+    }
   </style>
 </head>
 <body>
@@ -46,16 +240,13 @@
 <div class="main-content" id="mainContent">
   <div class="container">
     
-    <!-- TAB BAR -->
     <div class="tab-bar">
       <div class="tab active" data-tab="buyer">🌱 Покупателю</div>
       <div class="tab" data-tab="supplier">🏢 Поставщику</div>
       <div class="tab" data-tab="export">🌍 Экспорт</div>
     </div>
     
-    <!-- ВКЛАДКА: ПОКУПАТЕЛЬ -->
     <div id="buyerTabContent">
-      <!-- ПОИСК ЧЕРЕЗ ECOSIA (РАБОТАЕТ) -->
       <div class="card">
         <h3>🔍 Поиск в Ecosia</h3>
         <p>Каждый поиск сажает деревья 🌱</p>
@@ -64,11 +255,10 @@
           <button type="submit">🌍 Поиск через Ecosia</button>
         </form>
         <div class="search-info">
-          🌲 Ecosia использует Bing и сажает деревья на доходы от рекламы
+          🌲 Чтобы деревья реально сажались — установите официальное приложение Ecosia и авторизуйтесь в нём.
         </div>
       </div>
       
-      <!-- ПРЕДЛОЖЕНИЯ (СТАТИКА ДЛЯ ПРИМЕРА) -->
       <div class="card">
         <h3>📋 Предложения поставщиков</h3>
         <div class="seedling-item">
@@ -85,11 +275,9 @@
       </div>
     </div>
     
-    <!-- ВКЛАДКА: ПОСТАВЩИК -->
     <div id="supplierTabContent" class="hidden">
       <div class="card">
         <h3>🏢 Стать поставщиком</h3>
-        <p>Комиссия — 10% с заказа. Выход на экспорт.</p>
         <input type="text" id="supplierName" placeholder="Название / ИП">
         <input type="text" id="supplierInn" placeholder="ИНН">
         <input type="text" id="supplierPhone" placeholder="Телефон">
@@ -105,7 +293,6 @@
       </div>
     </div>
     
-    <!-- ВКЛАДКА: ЭКСПОРТ -->
     <div id="exportTabContent" class="hidden">
       <div class="card">
         <h3>🌍 Русские саженцы — миру</h3>
@@ -125,25 +312,22 @@
       </div>
     </div>
     
-    <!-- ОБЩИЕ КОНТАКТЫ (MAX + VK + EMAIL) -->
     <div class="card">
       <h3>💬 Связаться с Эквойей</h3>
       <div class="contact-bar">
-        <a href="https://max.ru/join/V9crGS5vyOWWdqDEodoMtLNkLCuymz0f80gMVMwx2sg" class="messenger-btn btn-max" target="_blank">💬 Max (чат)</a>
-        <a href="https://vk.com/equoia_club" class="messenger-btn btn-vk" target="_blank">📱 VK Сообщество</a>
+        <a href="https://max.ru/join/V9crGS5vyOWWdqDEodoMtLNkLCuymz0f80gMVMwx2sg" class="messenger-btn btn-max" target="_blank">💬 Max</a>
+        <a href="https://vk.com/equoia_club" class="messenger-btn btn-vk" target="_blank">📱 VK</a>
         <a href="mailto:equoia@internet.ru" class="messenger-btn btn-email" target="_blank">📧 Email</a>
       </div>
     </div>
     
-    <div class="footer">
-      🌱 Посажено через Эквойю: <span id="impactCount">127</span> деревьев
-    </div>
+    <div class="footer">🌲 Эквойя — приложение. Дерево. Бизнес.</div>
     <div class="version" id="versionText">v...</div>
   </div>
 </div>
 
 <script>
-  // ========== ЗАГРУЗОЧНЫЙ ЭКРАН ==========
+  // ЗАГРУЗОЧНЫЙ ЭКРАН
   setTimeout(() => {
     const splash = document.getElementById('splashScreen');
     const main = document.getElementById('mainContent');
@@ -156,76 +340,58 @@
     }
   }, 1200);
 
-  // ========== TAB BAR ==========
+  // ТАБЫ
   function switchTab(tabId) {
     document.getElementById('buyerTabContent').classList.add('hidden');
     document.getElementById('supplierTabContent').classList.add('hidden');
     document.getElementById('exportTabContent').classList.add('hidden');
     document.getElementById(`${tabId}TabContent`).classList.remove('hidden');
-    
     document.querySelectorAll('.tab').forEach(tab => {
       tab.classList.remove('active');
-      if (tab.getAttribute('data-tab') === tabId) {
-        tab.classList.add('active');
-      }
+      if (tab.getAttribute('data-tab') === tabId) tab.classList.add('active');
     });
   }
   
   document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const tabId = tab.getAttribute('data-tab');
-      switchTab(tabId);
-    });
+    tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
   });
 
-  // ========== ECOSIA ПОИСК (РАБОТАЕТ) ==========
+  // ECOSIA ПОИСК
   const SEARCH_URL = 'https://www.ecosia.org/search?q=';
-  
-  document.getElementById('searchForm')?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const query = document.getElementById('searchQuery')?.value.trim();
-    if (query) {
-      window.open(SEARCH_URL + encodeURIComponent(query), '_blank');
-    } else {
-      alert('🌲 Введите запрос — дерево посадим вместе!');
-    }
+  document.getElementById('searchForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = document.getElementById('searchQuery')?.value.trim();
+    if (q) window.open(SEARCH_URL + encodeURIComponent(q), '_blank');
+    else alert('🌲 Введите запрос');
   });
 
-  // ========== EMAIL ==========
+  // EMAIL
   const CONTACT_EMAIL = "equoia@internet.ru";
   function sendEmail(subject, body) {
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
-  // ========== ЗАЯВКИ ==========
+  // ЗАЯВКИ
   document.getElementById("becomeSupplierBtn")?.addEventListener("click", () => {
-    const name = document.getElementById("supplierName")?.value || "";
-    const inn = document.getElementById("supplierInn")?.value || "";
-    const phone = document.getElementById("supplierPhone")?.value || "";
-    const email = document.getElementById("supplierEmail")?.value || "";
-    const volume = document.getElementById("supplierVolume")?.value || "";
-    const catalog = document.getElementById("supplierCatalog")?.value || "";
-    sendEmail("Заявка поставщика", `Название: ${name}\nИНН: ${inn}\nТелефон: ${phone}\nEmail: ${email}\nОбъём: ${volume}\nКаталог: ${catalog}`);
+    sendEmail("Заявка поставщика", 
+      `Название: ${document.getElementById("supplierName")?.value || ""}\nИНН: ${document.getElementById("supplierInn")?.value || ""}\nТелефон: ${document.getElementById("supplierPhone")?.value || ""}\nEmail: ${document.getElementById("supplierEmail")?.value || ""}\nОбъём: ${document.getElementById("supplierVolume")?.value || ""}\nКаталог: ${document.getElementById("supplierCatalog")?.value || ""}`);
     alert("✅ Заявка отправлена!");
   });
 
   document.getElementById("sendExportBtn")?.addEventListener("click", () => {
-    const country = document.getElementById("exportCountry")?.value || "";
-    const tree = document.getElementById("exportTreeType")?.value || "";
-    const qty = document.getElementById("exportQuantity")?.value || "";
-    const msg = document.getElementById("exportMessage")?.value || "";
-    sendEmail("Экспорт", `Страна: ${country}\nТип: ${tree}\nКол-во: ${qty}\nСообщение: ${msg}`);
+    sendEmail("Экспорт", 
+      `Страна: ${document.getElementById("exportCountry")?.value || ""}\nТип: ${document.getElementById("exportTreeType")?.value || ""}\nКол-во: ${document.getElementById("exportQuantity")?.value || ""}\nСообщение: ${document.getElementById("exportMessage")?.value || ""}`);
     alert("✅ Запрос отправлен!");
   });
 
-  // ========== ВЕРСИЯ ==========
+  // ВЕРСИЯ
   async function checkVersion() {
     try {
       const res = await fetch('version.json?_=' + Date.now());
       const data = await res.json();
       document.getElementById("versionText").innerText = `v${data.version}`;
     } catch(e) {
-      document.getElementById("versionText").innerText = "🌲 Equoia v1.0";
+      document.getElementById("versionText").innerText = "🌲 v1.0";
     }
   }
   checkVersion();
